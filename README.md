@@ -108,8 +108,8 @@ export ROS_HOSTNAME=localhost
 
 ![alt text](https://github.com/minhduccse/superh-lab-kobuki-slam/blob/readme/power-supply-board/docs/power_supply.png?raw=true "Power supply for Khadas, Orbbec Astra cameras and RPLIDAR A1")
 
-|| Component  | Purpose |
-|| ------------- | ------------- |
+| | Component  | Purpose |
+| ------------- | ------------- | ------------- |
 | A  | Switch  | Switch to turn on/off the whole system |
 | 1  | DC Connector | XT60 port that accepts 12.6V power input from adapter (for testing purpose) |
 | 2  | XT60  | XT60 port that accepts 12.6V power input (battery power delivery) |
