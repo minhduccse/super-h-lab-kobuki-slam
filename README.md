@@ -42,6 +42,8 @@ make -j2
 
 sudo make install
 ```
+Step 1.3 and 1.4 is recommended to de done on both Khadas board and your PC. For Khadas board, due to the memory limit, `make` command should be executed using less than 3 threads (`make -j2`). Higher number of threads may result in failure of `make` process for shortage in RAM. 
+
 
 ### 1.4. Build RTAP-Map ros-pkg in catkin workspace
 ```
@@ -55,7 +57,7 @@ cd ..
 
 catkin_make -j2 -DRTABMAP_SYNC_MULTI_RGBD=ON
 ```
-Note that option `-DRTABMAP_SYNC_MULTI_RGBD=ON` is for multiple-camera usage.
+Note that option `-DRTABMAP_SYNC_MULTI_RGBD=ON` is for multiple-camera usage and `catkin_make` should also be run with 2 threads.
 
 ### 1.5. Config Orbbec Astra camera
 This step is required if you are using Orbbec Astra camera, for Kinect, please refer to other relevant documents.
@@ -97,7 +99,25 @@ export ROS_MASTER_URI=http://localhost:11311
 export ROS_HOSTNAME=localhost
 ```
 ### 2.2. SLAM with RTAB-Map: Mapping
+First step of SLAM algorithm is to generate the surrounding's map by manually maneuvering the robot around. 
+#### 2.2.1. Launch 'ros launch' files on Khadas
+We already created a few launch files to invoke our ROS components of mainly `nodes` and `topics`. The next step is to navigate to and run one by one.
+
+Let's open your favorite console; if not chosen yet, why not trying [Byobu](https://www.byobu.org/downloads)? In one window, run `roscore`:
+```
+roscore
+```
+In a new window, run `rplidar_ros` package:
+```
+roscd rplidar_ros/launch
+
+roslaunch rplidar.launch
+```
+
+### 2.3. SLAM with RTAB-Map: Localization
 
 
 
 ## 3. What's next?
+
+## 4. References
