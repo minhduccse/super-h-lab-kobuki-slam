@@ -101,3 +101,10 @@ export ROS_HOSTNAME=localhost
 
 
 ## 3. What's next?
+
+## Appendix
+
+### 1. Power supply
+
+![alt text](https://github.com/minhduccse/superh-lab-kobuki-slam/blob/readme/power-supply-board/docs/power_supply.png?raw=true)
+
