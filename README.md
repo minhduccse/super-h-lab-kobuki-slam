@@ -51,9 +51,9 @@ cd ~/catkin_ws/src
 
 git clone https://github.com/minhduccse/superh-lab-kobuki-slam
 
-rosdep install --from-paths src --ignore-src -r -y
-
 cd ..
+
+rosdep install --from-paths src --ignore-src -r -y
 
 catkin_make -j2 -DRTABMAP_SYNC_MULTI_RGBD=ON
 ```
@@ -99,28 +99,86 @@ export ROS_MASTER_URI=http://localhost:11311
 export ROS_HOSTNAME=localhost
 ```
 ### 2.2. SLAM with RTAB-Map: Mapping
-First step of SLAM algorithm is to generate the surrounding's map by manually maneuvering the robot around. 
-#### 2.2.1. Launch 'ros launch' files on Khadas
-We already created a few launch files to invoke our ROS components of mainly `nodes` and `topics`. The next step is to navigate to and run one by one.
+First step of SLAM algorithm is to generate the surrounding's map by manually maneuvering the robot around. We already created a few launch files to invoke our ROS components of mainly `nodes` and `topics`. The next step is to navigate to and run one by one.
 
-Let's open your favorite console; if not chosen yet, why not trying [Byobu](https://www.byobu.org/downloads)? In one window, run `roscore`:
+Let's open your favorite console; if not chosen yet, why not trying [Byobu](https://www.byobu.org/downloads)? In one window (1), run `roscore`:
 ```
 roscore
 ```
-In a new window, run `rplidar_ros` package:
+In a new window (2), run `rplidar_ros` package:
 ```
 roscd rplidar_ros/launch
 
 roslaunch rplidar.launch
 ```
+You may need to change the USB serial port for your LIDAR laser scanner by editting this line in the `rplidar.launch` file:
+```
+<param name="serial_port"   type="string"   value="/dev/ttyUSB1"/>
+```
+In another new window (3), run `astra_camera` package:
+```
+roscd astra_camera/launch
 
+roslaunch astra.launch # for 1 camera input
+
+roslaunch multi_astra.launch # for 2 camera input 
+```
+Note that for 2-camera launch file, you should specify `device_x_id` in these lines:
+```
+<arg name="device_1_id"       default="2bc5/0401@1/4"/>
+<arg name="device_2_id"       default="2bc5/0401@6/3"/>
+```
+Device IDs can be obtained from the log output of either above 1-cam or 2-cam launch files.
+
+In another new window (4), run `kobuki_node` package to bring up the nodelet manager for our Kobuki robot. Note that kobuki robot needs to be connected to Khadas board using the mini-USB port in the front.
+```
+roscd kobuki_node/launch
+
+roslaunch kobuki.launch
+```
+In another new window (5), run `kobuki_keyop` package to manually control the robot to build the map:
+```
+roscd kobuki_keyop/launch 
+
+roslaunch safe_keyop.launch
+```
+Finally, run `rtabmap_ros` package to begin mapping. During this, use the keyboard onto the `kobuki_keyop` terminal to navigate the robot.
+```
+roscd rtabmap_ros/launch
+
+roslaunch rtabmap_2_cam.launch
+```
+As for rtabmap, the mapping process is considered complete if a loop closure is found (= the robot trajectory is roundly enclosed).
+
+Want to see the mapping process? You can use `rviz` and add a few necessary topics by running this on your client PC:
+```
+rosrun rviz rviz
+```
+(Experimental) To make the robot automatedly discover the surrounding environment and do mapping, we can use the `explore_lite`:
+```
+roscd explore_lite/launch
+
+roslaunch explore.launch
+```
+The map database file is store at `~/.ros/rtabmap.db`. You may want to delete this file before a new mapping session. To view the recorded stuffs, use this tool:
+```
+rtabmap-databaseViewer ~/.ros/rtabmap.db
+```
 ### 2.3. SLAM with RTAB-Map: Localization
+After mapping is done, we can utilize it to autonomously navigate our robot. In the `rtabmap_2_camp.launch`, change this to `true`:
+```
+<arg name="localization"    default="true"/>
+```
+Next, launch all the ROS nodes as in section 2.2 above, but without `kobuki_keyop`. Instead, we have to run the `move_base` to enable autonomous navigation:
+```
+roscd rtabmap_ros/launch
 
-
+roslaunch move_base.launch
+```
+Now, on the PC client node, we can use `rviz` GUI to see the map and to navigate our robot to the destination through obstacles using `rviz` and pre-configured `rtab_nav.rviz` file.
 
 ## 3. What's next?
-
-## 3. What's next?
+Tell something about the rtabmap with 2 cam, some reading papers, and our intention to evaluate 2 cam vs 1 cam.
 
 ## Appendix
 
