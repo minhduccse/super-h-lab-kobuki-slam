@@ -1,4 +1,4 @@
-# SLAM with RTAP-Map and Kobuki robot
+# SLAM with RTAB-Map and Kobuki robot
 This repository consists of necessary packages for running RTAB-Map on Khadas Edge-V. Versions required for Khadas: Ubuntu 18.04 Server, ROS: Melodic.
 
 ## 1. Installation requirements
@@ -178,7 +178,30 @@ roslaunch move_base.launch
 Now, on the PC client node, we can use `rviz` GUI to see the map and to navigate our robot to the destination through obstacles using `rviz` and pre-configured `rtab_nav.rviz` file.
 
 ## 3. What's next?
-Tell something about the rtabmap with 2 cam, some reading papers, and our intention to evaluate 2 cam vs 1 cam.
+
+### 3.1. Performance evaluation
+As we are unsure of the performance of 2-cam vs 1-cam RTAB, we think that empirical experiments would shed some light. So, we may want to do a mapping with 2-cam sensor input and record all the required topics for `rtabmap_ros` package to run.
+
+The needed sensor topics are (may not be remembered correctly and subject to changes):
+- \scan
+- \odom
+- \rtabmap\rgbd_image0
+- \rtabmap\rgbd_image1
+- \tf2
+- \tf_static
+
+We successfully record them in a `rosbag` while doing a 2-cam mapping process. `rtabmap_ros` also works well when those topics are being played back offline. However, when we try to replay the `rosbag` for 1-cam rtabmap, as the `tf_tree` is not properly mapped, `rtabmap_ros` is not ready to work yet in this case. We think some small remapping effort would do the job! 
+
+After that, we think it is straightforward to generate the 2D maps from both cases using `rtabmap-databaseViewer` tool and make some comparisons between them. "accuracy" is a good choice to start with, refer to a paper on this at here. // adding
+
+### 3.2. Other useful ideas
+Some thoughts we had but not yet put into reality.
+1. An idea we previously discussed was about how the cameras' position may affect the performance of the RTAB-Map. We already know that feauture-based method is currently being used to extract features and thus to find loop closure amongst images. For this reason, I think whatever position they are in, as long as they are immobile throughout the mapping process, it is just like we are using a wider angle camera and there is not much to improve. However, this may come into play in cases of rich-feature environment so why not discussing this more?
+
+2. We also talked about the mapping time between 1-cam vs 2-cam. However, this heavily depends on the autonomous mapping algorithm and I think if we want to use the metric, we may need to develop one ourselves.
+
+3. ...
+
 
 ## Appendix
 
