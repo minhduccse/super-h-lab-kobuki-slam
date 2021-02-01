@@ -200,7 +200,11 @@ Some thoughts we had but not yet put into reality.
 
 2. We also talked about the mapping time between 1-cam vs 2-cam. However, this heavily depends on the autonomous mapping algorithm and I think if we want to use the metric, we may need to develop one ourselves.
 
-3. ...
+### 3.3. Some interesting papers
+Listed here are a few papers we find somewhat helpful, covering a wide range of topics:
+1. 1
+2. 2
+3. 3
 
 
 ## Appendix
