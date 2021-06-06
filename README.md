@@ -70,6 +70,8 @@ roscd astra_camera/
 ## 2. How to run
 This section includes a few steps to get RTAB-Map to perform SLAM on the Khadas board (ROS master's side) and PC (ROS client's side).
 ### 2.1. ROS network configuration
+**Remark: This step is performed on both Khadas and PC**
+
 First, let's get both Khadas board and your PCs in the same local network. In this case, Khadas board will be the ROS master node with its only one `roscore` running and other PCs will be ROS client node with NO `roscore` running.
 
 For the Khadas terminal, do the followings:
@@ -77,8 +79,8 @@ For the Khadas terminal, do the followings:
 vi ~/.bashrc
 
 # add these lines to the end of .bashrc file
-export ROS_MASTER_URI:http://192.168.0.100:11311 # address of Khadas
-export ROS_HOSTNAME:192.168.0.100
+export ROS_MASTER_URI=http://192.168.0.100:11311 # address of Khadas
+export ROS_HOSTNAME=192.168.0.100
 ```
 
 For your PC terminal:
@@ -86,19 +88,21 @@ For your PC terminal:
 vi ~/.bashrc
 
 # add these lines to the end of .bashrc file
-export ROS_MASTER_URI:http://192.168.0.100:11311 # address of Khadas
-export ROS_HOSTNAME:192.168.0.110 # address of PC
+export ROS_MASTER_URI=http://192.168.0.100:11311 # address of Khadas
+export ROS_HOSTNAME=192.168.0.110 # address of PC
 ```
 Finalize this step by executing this on both:
 ```
 source ~/.bashrc
 ```
-Note that ROS will only run with `roscore` running on the master node detected. Therefore, modify the added lines to these to get your ROS locally and independently available:
+For your PC, note that ROS will only run with `roscore` running on the master node detected. Therefore, modify the added lines to these to get your ROS locally and independently available:
 ```
 export ROS_MASTER_URI=http://localhost:11311
 export ROS_HOSTNAME=localhost
 ```
 ### 2.2. SLAM with RTAB-Map: Mapping
+**Remark: Steps in this Section 2.2 are mostly to be executed on Khadas. You are recommended to use SSH.**
+
 First step of SLAM algorithm is to generate the surrounding's map by manually maneuvering the robot around. We already created a few launch files to invoke our ROS components of mainly `nodes` and `topics`. The next step is to navigate to and run one by one.
 
 Let's open your favorite console; if not chosen yet, why not trying [Byobu](https://www.byobu.org/downloads)? In one window (1), run `roscore`:
@@ -150,21 +154,23 @@ roslaunch rtabmap_2_cam.launch
 ```
 As for rtabmap, the mapping process is considered complete if a loop closure is found (= the robot trajectory is roundly enclosed).
 
-Want to see the mapping process? You can use `rviz` and add a few necessary topics by running this on your client PC:
+Want to see the mapping process? You can use `rviz` and add a few necessary topics by running this **on your PC**:
 ```
 rosrun rviz rviz
 ```
-(Experimental) To make the robot automatedly discover the surrounding environment and do mapping, we can use the `explore_lite`:
+(Experimental) To make the robot automatedly discover the surrounding environment and do mapping, we can use the `explore_lite` **on Khadas**:
 ```
 roscd explore_lite/launch
 
 roslaunch explore.launch
 ```
-The map database file is store at `~/.ros/rtabmap.db`. You may want to delete this file before a new mapping session. To view the recorded stuffs, use this tool:
+The map database file is store at `~/.ros/rtabmap.db`. You may want to delete this file before a new mapping session. To view the recorded stuffs, use this tool **on your PC**:
 ```
 rtabmap-databaseViewer ~/.ros/rtabmap.db
 ```
-### 2.3. SLAM with RTAB-Map: Localization
+### 2.3. SLAM with RTAB-Map: Localization\
+**Remark: Steps in this Section 2.3 are to be executed on Khadas. You are recommended to use SSH.**
+
 After mapping is done, we can utilize it to autonomously navigate our robot. In the `rtabmap_2_camp.launch`, change this to `true`:
 ```
 <arg name="localization"    default="true"/>
