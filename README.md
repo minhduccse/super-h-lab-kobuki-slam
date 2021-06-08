@@ -158,6 +158,8 @@ Want to see the mapping process? You can use `rviz` and add a few necessary topi
 ```
 rosrun rviz rviz
 ```
+**Note:** To open the rviz files in this repository, they need to be set `-rw-r--r--` permission with `chown` command.
+
 (Experimental) To make the robot automatedly discover the surrounding environment and do mapping, we can use the `explore_lite` **on Khadas**:
 ```
 roscd explore_lite/launch
